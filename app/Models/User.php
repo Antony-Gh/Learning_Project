@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -13,37 +13,68 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'is_admin',
+        'total_points',
+        'stars',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
+    }
+
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(StageAttempt::class);
+    }
+
+    /**
+     * Get stages completed by this user.
+     */
+    public function completedStageIds(): array
+    {
+        return $this->attempts()
+            ->where('passed', true)
+            ->pluck('stage_id')
+            ->unique()
+            ->toArray();
+    }
+
+    /**
+     * Get the current stage (first uncompleted stage).
+     */
+    public function currentStage()
+    {
+        $completedIds = $this->completedStageIds();
+
+        return Stage::orderBy('order')
+            ->whereNotIn('id', $completedIds)
+            ->first();
+    }
+
+    /**
+     * Get overall progress percentage.
+     */
+    public function progressPercentage(): float
+    {
+        $totalStages = Stage::count();
+        if ($totalStages === 0)
+            return 0;
+
+        $completed = count($this->completedStageIds());
+        return round(($completed / $totalStages) * 100, 1);
     }
 }

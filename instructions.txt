@@ -24,7 +24,7 @@ git status
 
 git add .
 
-git commit -m "installing Laravel"
+git commit -m "first Initial Laravel setup files"
 
 
 git push -u origin main
