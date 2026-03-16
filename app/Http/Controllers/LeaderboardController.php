@@ -15,6 +15,26 @@ class LeaderboardController extends Controller
                ->take(50)
                ->get();
 
-          return view('leaderboard.index', compact('students'));
+          $studentsJson = $students->map(function ($s) {
+               return [
+                    'id' => $s->id,
+                    'name' => $s->name,
+                    'total_points' => $s->total_points,
+                    'stars' => $s->stars,
+               ];
+          });
+
+          return view('leaderboard.index', compact('students', 'studentsJson'));
+     }
+
+     public function data()
+     {
+          $students = User::where('is_admin', false)
+               ->orderByDesc('total_points')
+               ->orderByDesc('stars')
+               ->take(50)
+               ->get(['id', 'name', 'total_points', 'stars']);
+
+          return response()->json($students);
      }
 }

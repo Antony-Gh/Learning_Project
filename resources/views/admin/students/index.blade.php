@@ -1,0 +1,69 @@
+<x-app-layout>
+     @section('title', 'Students')
+
+     <div class="py-8">
+          <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+               <a href="{{ route('admin.dashboard') }}" class="text-slate-400 hover:text-white text-sm">← Admin
+                    Dashboard</a>
+               <h1 class="text-3xl font-bold text-white mt-1 mb-8">👥 Student Progress</h1>
+
+               <div class="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+                    <div class="overflow-x-auto">
+                         <table class="w-full">
+                              <thead>
+                                   <tr class="text-left border-b border-white/10">
+                                        <th class="px-6 py-4 text-sm text-slate-400">Student</th>
+                                        <th class="px-6 py-4 text-sm text-slate-400 text-center">Points</th>
+                                        <th class="px-6 py-4 text-sm text-slate-400 text-center">Stars</th>
+                                        <th class="px-6 py-4 text-sm text-slate-400 text-center">Attempts</th>
+                                        @foreach($stages as $stage)
+                                             <th class="px-4 py-4 text-sm text-slate-400 text-center"
+                                                  title="{{ $stage->title }}">
+                                                  S{{ $stage->order }}
+                                             </th>
+                                        @endforeach
+                                   </tr>
+                              </thead>
+                              <tbody>
+                                   @foreach($students as $student)
+                                        @php $completedIds = $student->completedStageIds(); @endphp
+                                        <tr class="border-b border-white/5 hover:bg-white/5">
+                                             <td class="px-6 py-4">
+                                                  <div class="flex items-center space-x-3">
+                                                       <div
+                                                            class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+                                                            {{ strtoupper(substr($student->name, 0, 1)) }}
+                                                       </div>
+                                                       <div>
+                                                            <div class="text-white font-medium">{{ $student->name }}</div>
+                                                            <div class="text-xs text-slate-500">{{ $student->email }}</div>
+                                                       </div>
+                                                  </div>
+                                             </td>
+                                             <td class="px-6 py-4 text-center text-emerald-400 font-bold">
+                                                  {{ number_format($student->total_points) }}</td>
+                                             <td class="px-6 py-4 text-center text-amber-400">{{ $student->stars }} ⭐</td>
+                                             <td class="px-6 py-4 text-center text-slate-300">{{ $student->attempts_count }}
+                                             </td>
+                                             @foreach($stages as $stage)
+                                                  <td class="px-4 py-4 text-center">
+                                                       @if(in_array($stage->id, $completedIds))
+                                                            <span class="text-emerald-400" title="Completed">✓</span>
+                                                       @else
+                                                            <span class="text-slate-600">—</span>
+                                                       @endif
+                                                  </td>
+                                             @endforeach
+                                        </tr>
+                                   @endforeach
+                              </tbody>
+                         </table>
+                    </div>
+               </div>
+
+               <div class="mt-4">
+                    {{ $students->links() }}
+               </div>
+          </div>
+     </div>
+</x-app-layout>

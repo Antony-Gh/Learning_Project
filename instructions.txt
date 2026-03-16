@@ -27,7 +27,7 @@ git add .
 git commit -m "first Initial Laravel setup files"
 
 
-git push -u origin main
+git push -u origin master
 
 
 

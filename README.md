@@ -1,59 +1,283 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🧪 ChemQuest — Chemistry Quiz Learning Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A progressive chemistry quiz platform for high school students built with **Laravel 12**, **TailwindCSS**, and **Alpine.js**.
 
-## About Laravel
+Students progress through 5 chemistry stages, take timed quizzes, earn points and stars, and compete on a leaderboard. Teachers manage stages, questions, and monitor student progress through an admin panel.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📁 Project Structure
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+ChemQuest/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/
+│   │   │   │   ├── AdminDashboardController.php    # Admin overview stats
+│   │   │   │   ├── AdminQuestionController.php     # Question CRUD
+│   │   │   │   ├── AdminStageController.php        # Stage CRUD
+│   │   │   │   └── AdminStudentController.php      # Student progress view
+│   │   │   ├── Auth/                               # Breeze auth controllers
+│   │   │   ├── DashboardController.php             # Student dashboard
+│   │   │   ├── LeaderboardController.php           # Top students ranking
+│   │   │   ├── NotificationController.php          # Mark notifications read
+│   │   │   ├── QuizController.php                  # Quiz start/show/submit/result
+│   │   │   └── StageController.php                 # Stage list & detail
+│   │   └── Middleware/
+│   │       └── AdminMiddleware.php                 # Admin route protection
+│   ├── Models/
+│   │   ├── AttemptAnswer.php                       # Individual question response
+│   │   ├── Question.php                            # MCQ with randomized scope
+│   │   ├── Stage.php                               # Stage with unlock logic
+│   │   ├── StageAttempt.php                        # Quiz attempt record
+│   │   └── User.php                                # Extended with gamification
+│   └── Notifications/
+│       └── StageCompleted.php                      # Database notification
+├── bootstrap/
+│   └── app.php                                     # Admin middleware registered
+├── database/
+│   ├── migrations/
+│   │   ├── 0001_01_01_000000_create_users_table.php       # + is_admin, points, stars
+│   │   ├── 2025_01_01_000010_create_stages_table.php      # Stages
+│   │   ├── 2025_01_01_000020_create_questions_table.php   # Questions
+│   │   ├── 2025_01_01_000030_create_stage_attempts_table.php  # Attempts
+│   │   ├── 2025_01_01_000040_create_attempt_answers_table.php # Answers
+│   │   └── 2026_..._create_notifications_table.php        # Notifications
+│   └── seeders/
+│       ├── DatabaseSeeder.php
+│       ├── QuestionSeeder.php                      # 50 chemistry questions
+│       ├── StageSeeder.php                         # 5 progressive stages
+│       └── UserSeeder.php                          # Admin + Student accounts
+├── resources/views/
+│   ├── admin/
+│   │   ├── dashboard.blade.php                     # Admin stats overview
+│   │   ├── questions/
+│   │   │   ├── create.blade.php                    # Add question form
+│   │   │   ├── edit.blade.php                      # Edit question form
+│   │   │   └── index.blade.php                     # Question list per stage
+│   │   ├── stages/
+│   │   │   ├── create.blade.php                    # Create stage form
+│   │   │   ├── edit.blade.php                      # Edit stage form
+│   │   │   └── index.blade.php                     # Stage management list
+│   │   └── students/
+│   │       └── index.blade.php                     # Student progress matrix
+│   ├── auth/                                       # Breeze auth views
+│   ├── dashboard.blade.php                         # Student dashboard
+│   ├── layouts/
+│   │   ├── app.blade.php                           # Main layout (dark theme)
+│   │   ├── guest.blade.php                         # Auth layout
+│   │   └── navigation.blade.php                    # Nav with notification bell
+│   ├── leaderboard/
+│   │   └── index.blade.php                         # Top students ranking
+│   ├── quiz/
+│   │   ├── result.blade.php                        # Score + answer review
+│   │   └── show.blade.php                          # Quiz with Alpine.js timer
+│   ├── stages/
+│   │   ├── index.blade.php                         # Visual roadmap
+│   │   └── show.blade.php                          # Stage detail + start quiz
+│   └── welcome.blade.php                           # Landing page
+├── routes/
+│   ├── auth.php                                    # Breeze auth routes
+│   └── web.php                                     # All app routes
+├── .env                                            # SQLite config (ready to run)
+├── composer.json
+└── package.json
+```
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🚀 Quick Start
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+# 1. Navigate to project directory
+cd e:\Projects\Learning_Project
 
-## Laravel Sponsors
+# 2. Install PHP dependencies
+composer install
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# 3. Install Node dependencies
+npm install
 
-### Premium Partners
+# 4. Set up environment
+cp .env.example .env
+php artisan key:generate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# 5. Run migrations and seed demo data
+php artisan migrate:fresh --seed
 
-## Contributing
+# 6. Start Laravel server
+php artisan serve
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 7. Start Vite dev server (new terminal)
+npm run dev
 
-## Code of Conduct
+# 8. Open http://127.0.0.1:8000
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+> **Note:** The app uses SQLite by default — no MySQL setup needed.
+> To switch to MySQL, update `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` in `.env`.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🔑 Demo Credentials
 
-## License
+| Role                | Email                 | Password |
+| ------------------- | --------------------- | -------- |
+| **Admin (Teacher)** | admin@chemquest.com   | password |
+| **Student**         | student@chemquest.com | password |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 📊 Database Schema
+
+### Relationships
+```
+User ──────── hasMany ──────→ StageAttempt
+Stage ─────── hasMany ──────→ Question
+Stage ─────── hasMany ──────→ StageAttempt
+StageAttempt ─ belongsTo ───→ User
+StageAttempt ─ belongsTo ───→ Stage
+StageAttempt ─ hasMany ─────→ AttemptAnswer
+AttemptAnswer ─ belongsTo ──→ Question
+```
+
+### Tables
+| Table               | Key Fields                                                                                      |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| **users**           | name, email, password, is_admin, total_points, stars                                            |
+| **stages**          | title, description, order, time_limit_minutes, passing_percentage, points_reward                |
+| **questions**       | stage_id, question_text, option_a/b/c/d, correct_answer, difficulty                             |
+| **stage_attempts**  | user_id, stage_id, score, total_questions, passed, time_spent_seconds, started_at, completed_at |
+| **attempt_answers** | stage_attempt_id, question_id, selected_answer, is_correct                                      |
+| **notifications**   | Laravel built-in notifications table                                                            |
+
+---
+
+## 🔒 Stage Unlock Logic
+
+```
+Stage 1 (Atomic Structure)    → Always unlocked
+Stage 2 (Chemical Bonding)    → Unlocked when Stage 1 passed (≥75%)
+Stage 3 (Reactions & Equations)→ Unlocked when Stage 2 passed
+Stage 4 (Acids, Bases & pH)   → Unlocked when Stage 3 passed
+Stage 5 (Organic Chemistry)   → Unlocked when Stage 4 passed
+```
+
+Implemented in `app/Models/Stage.php` → `isUnlockedFor(User $user)`
+
+---
+
+## ⏱ Timer System (Alpine.js)
+
+The quiz page uses an Alpine.js countdown timer that:
+- Starts when quiz page loads
+- Shows countdown in `MM:SS` format
+- Changes color: green → amber → red (< 60s)
+- Has an animated time progress bar
+- **Auto-submits** the quiz form when time reaches zero
+
+```javascript
+function quizTimer(totalSeconds) {
+    return {
+        remaining: totalSeconds,
+        total: totalSeconds,
+        init() {
+            this.interval = setInterval(() => {
+                this.remaining--;
+                if (this.remaining <= 0) {
+                    clearInterval(this.interval);
+                    document.getElementById('quiz-form').submit();
+                }
+            }, 1000);
+        },
+        get display() {
+            const m = Math.floor(this.remaining / 60);
+            const s = this.remaining % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        },
+        get timePercent() {
+            return Math.max(0, (this.remaining / this.total) * 100);
+        }
+    };
+}
+```
+
+---
+
+## 🏅 Gamification Rules
+
+| Event                   | Points    | Stars    | Notification            |
+| ----------------------- | --------- | -------- | ----------------------- |
+| Pass stage (first time) | +100      | +1       | "🎉 You passed {stage}!" |
+| Pass stage (retry)      | +50       | —        | "Great job retrying!"   |
+| Perfect score (100%)    | +50 bonus | +1 bonus | "⭐ Perfect score!"      |
+| Fail stage              | —         | —        | "Keep trying!"          |
+| Next stage unlocked     | —         | —        | "🔓 Stage unlocked!"     |
+
+---
+
+## 🛣 Routes
+
+### Student Routes (auth required)
+| Method | URI                        | Controller                  | Description       |
+| ------ | -------------------------- | --------------------------- | ----------------- |
+| GET    | /dashboard                 | DashboardController@index   | Student dashboard |
+| GET    | /stages                    | StageController@index       | Stage roadmap     |
+| GET    | /stages/{stage}            | StageController@show        | Stage detail      |
+| POST   | /stages/{stage}/quiz/start | QuizController@start        | Start quiz        |
+| GET    | /quiz/{attempt}            | QuizController@show         | Quiz page + timer |
+| POST   | /quiz/{attempt}/submit     | QuizController@submit       | Submit answers    |
+| GET    | /quiz/{attempt}/result     | QuizController@result       | View results      |
+| GET    | /leaderboard               | LeaderboardController@index | Top students      |
+
+### Admin Routes (/admin, admin middleware)
+| Method   | URI                             | Controller                     | Description      |
+| -------- | ------------------------------- | ------------------------------ | ---------------- |
+| GET      | /admin/dashboard                | AdminDashboardController@index | Admin overview   |
+| Resource | /admin/stages                   | AdminStageController           | Stage CRUD       |
+| Resource | /admin/stages/{stage}/questions | AdminQuestionController        | Question CRUD    |
+| GET      | /admin/students                 | AdminStudentController@index   | Student progress |
+
+---
+
+## 📚 Seeded Content
+
+### 5 Chemistry Stages
+1. **Atomic Structure** — 10 questions, 10 min, +100 pts
+2. **Chemical Bonding** — 10 questions, 12 min, +120 pts
+3. **Reactions & Equations** — 10 questions, 15 min, +140 pts
+4. **Acids, Bases & pH** — 10 questions, 12 min, +150 pts
+5. **Organic Chemistry** — 10 questions, 15 min, +200 pts
+
+### 50 Real Chemistry Questions
+Mixed difficulty (easy/medium/hard) covering:
+- Atomic number, electron configuration, isotopes
+- Ionic/covalent/metallic bonds, electronegativity
+- Balancing equations, reaction types, stoichiometry
+- pH scale, neutralization, buffers
+- Hydrocarbons, functional groups, IUPAC naming
+
+---
+
+## 🎨 UI Design
+
+- **Dark gradient theme** (slate-900 → purple-900)
+- **Glassmorphism** cards with backdrop-blur
+- **Responsive** design (mobile-first)
+- **Animated** progress bars and transitions
+- **Emoji icons** throughout for engagement
+- **Notification bell** with unread count badge
+
+---
+
+## Tech Stack
+
+| Layer         | Technology                      |
+| ------------- | ------------------------------- |
+| Backend       | Laravel 12.54.1                 |
+| Frontend      | Blade + TailwindCSS + Alpine.js |
+| Database      | SQLite (configurable to MySQL)  |
+| Auth          | Laravel Breeze                  |
+| Build         | Vite 7.3.1                      |
+| Notifications | Laravel database notifications  |
