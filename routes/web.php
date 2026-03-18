@@ -94,4 +94,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/students', [AdminStudentController::class, 'index'])->name('students.index');
 });
 
+/*
+|--------------------------------------------------------------------------
+| System Fallback
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/sys-suspended', function () {
+    return view('errors.sys-suspended');
+})->name('sys.suspended');
+
 require __DIR__ . '/auth.php';
