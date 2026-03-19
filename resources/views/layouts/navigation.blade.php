@@ -154,8 +154,24 @@
                 </x-dropdown>
             </div>
 
-            <!-- Mobile hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
+            <!-- Mobile controls (Language + Hamburger) -->
+            <div class="-me-2 flex items-center sm:hidden gap-2">
+                <!-- Mobile Language Switcher -->
+                <div class="relative">
+                    @if(app()->getLocale() === 'ar')
+                        <a href="{{ route('language.switch', 'en') }}"
+                            class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 transition">
+                            <img src="https://flagcdn.com/w20/us.png" srcset="https://flagcdn.com/w40/us.png 2x" width="20" alt="English"> 🇺🇸 EN
+                        </a>
+                    @else
+                        <a href="{{ route('language.switch', 'ar') }}"
+                            class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 transition"
+                            dir="rtl">
+                            <img src="https://flagcdn.com/w20/eg.png" srcset="https://flagcdn.com/w40/eg.png 2x" width="20" alt="Arabic"> 🇪🇬 AR
+                        </a>
+                    @endif
+                </div>
+
                 <button @click="open = !open"
                     class="p-2 rounded-md text-slate-400 hover:text-white hover:bg-white/10 transition">
                     <div class="relative w-6 h-6 transform transition-transform duration-300" :class="open ? 'rotate-90' : 'rotate-0'">
