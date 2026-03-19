@@ -18,7 +18,8 @@ class SetLocale
         if (session()->has('locale')) {
             app()->setLocale(session('locale'));
         } else {
-            app()->setLocale(config('app.locale'));
+            $preferred = $request->getPreferredLanguage(['en', 'ar']);
+            app()->setLocale($preferred ?: config('app.locale'));
         }
 
         return $next($request);

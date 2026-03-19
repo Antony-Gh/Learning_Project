@@ -20,6 +20,21 @@
     x-data="{ mounted: false }" x-init="setTimeout(() => mounted = true, 100)">
 
     <div class="flex-1 flex items-center justify-center px-4 py-8">
+        <!-- Language Switcher -->
+        <div class="absolute top-4 end-4 z-50">
+            @if(app()->getLocale() === 'ar')
+                <a href="{{ route('language.switch', 'en') }}"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 transition bg-black/20 backdrop-blur-md border border-white/10">
+                    <img src="https://flagcdn.com/w20/us.png" srcset="https://flagcdn.com/w40/us.png 2x" width="20" alt="English"> EN
+                </a>
+            @else
+                <a href="{{ route('language.switch', 'ar') }}"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 transition bg-black/20 backdrop-blur-md border border-white/10"
+                    dir="rtl">
+                    <img src="https://flagcdn.com/w20/eg.png" srcset="https://flagcdn.com/w40/eg.png 2x" width="20" alt="Arabic"> AR
+                </a>
+            @endif
+        </div>
         <div class="text-center max-w-3xl transition-all duration-1000 transform"
              :class="mounted ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'">
             {{-- Creative Animated Logo --}}

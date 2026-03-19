@@ -67,14 +67,14 @@
                 <div class="relative">
                     @if(app()->getLocale() === 'ar')
                         <a href="{{ route('language.switch', 'en') }}"
-                            class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 transition">
-                            🇺🇸 EN
+                            class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 transition">
+                            <img src="https://flagcdn.com/w20/us.png" srcset="https://flagcdn.com/w40/us.png 2x" width="20" alt="English"> 🇺🇸 EN
                         </a>
                     @else
                         <a href="{{ route('language.switch', 'ar') }}"
-                            class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 transition"
+                            class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 transition"
                             dir="rtl">
-                            🇪🇬 AR
+                            <img src="https://flagcdn.com/w20/eg.png" srcset="https://flagcdn.com/w40/eg.png 2x" width="20" alt="Arabic"> 🇪🇬 AR
                         </a>
                     @endif
                 </div>
